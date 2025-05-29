@@ -14,8 +14,8 @@ A web application to search, filter, and view clinical trials for Peripheral T-c
 
 ### 1. Clone the repository
 ```sh
-git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git
-cd YOUR-REPO
+git clone https://github.com/medhabelwadi/ptcl-clinical-trials-viewer.git
+cd ptcl-clinical-trials-viewer
 ```
 
 ### 2. Install dependencies
@@ -43,13 +43,3 @@ npm start
 - Use the filters to search for clinical trials.
 - Click "View on ClinicalTrials.gov" for more details.
 
-## Tech Stack
-
-- React + TypeScript (frontend)
-- Node.js + Express (backend proxy)
-- Material-UI (UI components)
-- ClinicalTrials.gov v2 API
-
-## License
-
-MIT (or your preferred license)
