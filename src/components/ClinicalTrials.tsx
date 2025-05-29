@@ -291,6 +291,12 @@ const ClinicalTrials: React.FC = () => {
               {loadingMore ? 'Loading...' : 'Load More'}
             </Button>
           )}
+          <Box mt={6} mb={2}>
+            <Typography variant="subtitle2" color="textSecondary" align="center">
+              Data sourced from <a href="https://clinicaltrials.gov/" target="_blank" rel="noopener noreferrer">ClinicalTrials.gov</a>.<br />
+              Geocoding provided by <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener noreferrer">OpenStreetMap Nominatim</a>.<br />
+            </Typography>
+          </Box>
         </>
       )}
     </Container>
