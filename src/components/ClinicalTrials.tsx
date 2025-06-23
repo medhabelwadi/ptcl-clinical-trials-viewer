@@ -81,7 +81,7 @@ const ClinicalTrials: React.FC = () => {
         params.lon = geoToUse.lon;
         params.radius = radius;
       }
-      const response = await axios.get('http://localhost:5000/api/clinical-trials', { params });
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/clinical-trials`, { params })
       const trialsData = (response.data.studies || []).map((study: any) => ({
         nctId: study.protocolSection?.identificationModule?.nctId || 'N/A',
         briefTitle: study.protocolSection?.identificationModule?.briefTitle || 'No Title',
@@ -120,7 +120,7 @@ const ClinicalTrials: React.FC = () => {
   const fetchLocations = async (nctId: string) => {
     if (trialLocations[nctId]) return; // Already fetched
     try {
-      const response = await axios.get(`http://localhost:5000/api/clinical-trials/${nctId}`);
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/clinical-trials/${nctId}`);
       const locations = response.data.protocolSection?.contactsLocationsModule?.locations || [];
       const locationStrings = locations.map((loc: any) => {
         let parts = [];
