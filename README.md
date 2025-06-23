@@ -1,5 +1,7 @@
 # PTCL Clinical Trials Viewer
 
+**You can access the deployed app here:** [https://ptcl-clinical-trials-viewer-1.onrender.com/](https://ptcl-clinical-trials-viewer-1.onrender.com/)
+
 A web application to search, filter, and view clinical trials for Peripheral T-cell Lymphoma (PTCL) and its subtypes, using data from ClinicalTrials.gov.
 
 ## Features
@@ -42,4 +44,15 @@ npm start
 - Open [http://localhost:3000](http://localhost:3000) in your browser.
 - Use the filters to search for clinical trials.
 - Click "View on ClinicalTrials.gov" for more details.
+
+## Tech Stack
+
+- React + TypeScript (frontend)
+- Node.js + Express (backend proxy)
+- Material-UI (UI components)
+- ClinicalTrials.gov v2 API
+
+## License
+
+MIT (or your preferred license)
 

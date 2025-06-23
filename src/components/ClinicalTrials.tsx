@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Container, Typography, Card, CardContent, CircularProgress, Button, FormControl, InputLabel, Select, MenuItem, OutlinedInput, Checkbox, ListItemText, Box, TextField } from '@mui/material';
+import { Container, Typography, Card, CardContent, CircularProgress, Button, FormControl, InputLabel, Select, MenuItem, OutlinedInput, Checkbox, ListItemText, Box, TextField, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface ClinicalTrial {
   nctId: string;
@@ -265,18 +266,22 @@ const ClinicalTrials: React.FC = () => {
                 >
                   View on ClinicalTrials.gov
                 </Button>
-                <Box mt={2}>
-                  <Typography variant="subtitle2">Locations:</Typography>
-                  {trialLocations[trial.nctId] ? (
-                    <ul style={{ margin: 0, paddingLeft: 20 }}>
-                      {trialLocations[trial.nctId].map((loc, idx) => (
-                        <li key={idx}>{loc}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <Typography variant="body2">Loading locations...</Typography>
-                  )}
-                </Box>
+                <Accordion sx={{ mt: 2 }}>
+                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography variant="subtitle2">Locations</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    {trialLocations[trial.nctId] ? (
+                      <ul style={{ margin: 0, paddingLeft: 20 }}>
+                        {trialLocations[trial.nctId].map((loc, idx) => (
+                          <li key={idx}>{loc}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <Typography variant="body2">Loading locations...</Typography>
+                    )}
+                  </AccordionDetails>
+                </Accordion>
               </CardContent>
             </Card>
           ))}
