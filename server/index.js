@@ -10,29 +10,29 @@ app.use(express.json());
 
 app.get('/api/clinical-trials', async (req, res) => {
   try {
-    const params = {
-      'query.cond': req.query.cond || 'peripheral T cell lymphoma',
-      fields: [
-        'protocolSection.identificationModule.nctId',
-        'protocolSection.identificationModule.briefTitle',
-        'protocolSection.descriptionModule.briefSummary',
-        'protocolSection.statusModule.overallStatus'
-      ].join(','),
-      pageSize: 10
-    };
-    if (req.query.pageToken) {
-      params.pageToken = req.query.pageToken;
+    const params = { ...req.query };
+    // Map 'cond' to 'query.cond' for the API
+    if (params.cond) {
+      params['query.cond'] = params.cond;
+      delete params.cond;
     }
-    let statusParam = req.query.status || req.query['status[]'];
-    if (statusParam) {
-      params['filter.overallStatus'] = Array.isArray(statusParam)
-        ? statusParam.join(',')
-        : statusParam;
+    // Map 'status' to 'filter.overallStatus' for the API
+    if (params.status) {
+      params['filter.overallStatus'] = params.status;
+      delete params.status;
     }
-    // Add geo filter if lat, lon, and radius are present
-    if (req.query.lat && req.query.lon && req.query.radius) {
-      params['filter.geo'] = `distance(${req.query.lat},${req.query.lon},${req.query.radius}mi)`;
-    }
+    params.fields = [
+      'protocolSection.identificationModule.nctId',
+      'protocolSection.identificationModule.briefTitle',
+      'protocolSection.descriptionModule.briefSummary',
+      'protocolSection.statusModule.overallStatus',
+      'protocolSection.statusModule.startDateStruct',
+      'protocolSection.statusModule.primaryCompletionDateStruct',
+      'protocolSection.contactsLocationsModule.locations',
+      'protocolSection.designModule.phases'
+    ].join(',');
+    if (!params.pageSize) params.pageSize = 10;
+
     const response = await axios.get(
       'https://clinicaltrials.gov/api/v2/studies',
       { params }
