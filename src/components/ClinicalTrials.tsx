@@ -74,7 +74,6 @@ const ClinicalTrials: React.FC = () => {
     try {
       const params: any = {};
       if (pageToken) params.pageToken = pageToken;
-      if (subtype && subtype !== 'All') params.cond = subtype;
       if (status && status.length > 0) params.status = status;
       const geoToUse = geoOverride !== undefined ? geoOverride : geo;
       if (geoToUse && radius) {
@@ -82,19 +81,47 @@ const ClinicalTrials: React.FC = () => {
         params.lon = geoToUse.lon;
         params.radius = radius;
       }
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/clinical-trials`, { params })
-      const trialsData = (response.data.studies || []).map((study: any) => ({
-        nctId: study.protocolSection?.identificationModule?.nctId || 'N/A',
-        briefTitle: study.protocolSection?.identificationModule?.briefTitle || 'No Title',
-        briefSummary: study.protocolSection?.descriptionModule?.briefSummary || 'No Summary',
-        overallStatus: study.protocolSection?.statusModule?.overallStatus || 'Unknown',
-      }));
-      if (pageToken) {
-        setTrials(prev => [...prev, ...trialsData]);
+      let allTrials: any[] = [];
+      if (!subtype || subtype === 'All') {
+        // Fetch for each PTCL subtype (excluding 'All')
+        const subtypeList = PTCL_SUBTYPES.filter(s => s !== 'All');
+        const requests = subtypeList.map(sub =>
+          axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/clinical-trials`, { params: { ...params, cond: sub } })
+        );
+        const responses = await Promise.all(requests);
+        // Combine and deduplicate by NCT ID
+        const seen = new Set();
+        responses.forEach(res => {
+          (res.data.studies || []).forEach((study: any) => {
+            const nctId = study.protocolSection?.identificationModule?.nctId;
+            if (nctId && !seen.has(nctId)) {
+              allTrials.push({
+                nctId,
+                briefTitle: study.protocolSection?.identificationModule?.briefTitle || 'No Title',
+                briefSummary: study.protocolSection?.descriptionModule?.briefSummary || 'No Summary',
+                overallStatus: study.protocolSection?.statusModule?.overallStatus || 'Unknown',
+              });
+              seen.add(nctId);
+            }
+          });
+        });
       } else {
-        setTrials(trialsData);
+        // Fetch for specific subtype
+        params.cond = subtype;
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/clinical-trials`, { params });
+        allTrials = (response.data.studies || []).map((study: any) => ({
+          nctId: study.protocolSection?.identificationModule?.nctId || 'N/A',
+          briefTitle: study.protocolSection?.identificationModule?.briefTitle || 'No Title',
+          briefSummary: study.protocolSection?.descriptionModule?.briefSummary || 'No Summary',
+          overallStatus: study.protocolSection?.statusModule?.overallStatus || 'Unknown',
+        }));
       }
-      setNextPageToken(response.data.nextPageToken || null);
+      if (pageToken) {
+        setTrials(prev => [...prev, ...allTrials]);
+      } else {
+        setTrials(allTrials);
+      }
+      setNextPageToken(null); // Pagination for 'All' is not supported in this mode
       setLoading(false);
       setLoadingMore(false);
     } catch (err) {

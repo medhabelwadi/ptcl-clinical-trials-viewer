@@ -11,11 +11,10 @@ app.use(express.json());
 app.get('/api/clinical-trials', async (req, res) => {
   try {
     const params = { ...req.query };
-    // Map 'cond' to 'query.cond' for the API
-    if (params.cond) {
-      params['query.cond'] = params.cond;
-      delete params.cond;
-    }
+    // Always use a broad PTCL condition if not provided
+    params['query.cond'] = req.query.cond || 'peripheral T cell lymphoma';
+    // Remove any direct 'cond' property to avoid conflicts
+    delete params.cond;
     // Map 'status' to 'filter.overallStatus' for the API
     if (params.status) {
       params['filter.overallStatus'] = params.status;
