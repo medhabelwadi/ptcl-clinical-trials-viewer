@@ -161,17 +161,33 @@ const Dashboard_data: React.FC = () => {
     }, []);
 
     return (
-        <div>
-          <h2>PTCL Clinical Trials Dashboard</h2>
-          <Box display="flex" gap={4} mt={6} justifyContent="center" alignItems="stretch">
+        <Box sx={{ maxWidth: 1200, mx: 'auto', px: 3 }}>
+          <Typography variant="h4" component="h2" textAlign="center" mb={4}>
+            PTCL Clinical Trials Dashboard
+          </Typography>
+          <Box display="flex" gap={3} mb={6}>
+            <Paper elevation={3} sx={{ p: 3, flex: 1, textAlign: 'center' }}>
+              <Typography variant="h6">Total Trials</Typography>
+              <Typography variant="h3" color="primary">{total}</Typography>
+            </Paper>
+            <Paper elevation={3} sx={{ p: 3, flex: 1, textAlign: 'center' }}>
+              <Typography variant="h6">Currently Recruiting</Typography>
+              <Typography variant="h3" color="primary">{recruiting}</Typography>
+            </Paper>
+            <Paper elevation={3} sx={{ p: 3, flex: 1, textAlign: 'center' }}>
+              <Typography variant="h6">Completed Trials</Typography>
+              <Typography variant="h3" color="primary">{completed}</Typography>
+            </Paper>
+          </Box>
+          <Box display="flex" gap={4} mb={6} justifyContent="center" alignItems="stretch">
             <StatusPieChart statusData={statusData} />
             <SubtypeBarChart data={subtypeData} />
           </Box>
-          <Box display="flex" gap={4} mt={6} justifyContent="center" alignItems="stretch">
+          <Box display="flex" gap={4} mb={6} justifyContent="center" alignItems="stretch">
             <TrialsByLocationChart data={locationData} />
             <TrialsByYearChart data={yearData} />
           </Box>
-        </div>
+        </Box>
       );
 };
 
