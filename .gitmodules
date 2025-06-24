@@ -1,0 +1,3 @@
+[submodule "NLWeb"]
+	path = NLWeb
+	url = https://github.com/microsoft/NLWeb.git

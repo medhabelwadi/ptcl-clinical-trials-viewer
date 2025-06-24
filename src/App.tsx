@@ -3,6 +3,7 @@ import { CssBaseline, ThemeProvider, createTheme, AppBar, Tabs, Tab, Toolbar, Bo
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import ClinicalTrials from './components/ClinicalTrials';
 import Dashboard_data from './components/Dashboard';
+import ChatInterface from './components/ChatInterface';
 
 const theme = createTheme({
   palette: {
@@ -19,7 +20,9 @@ function NavTabs() {
   const navigate = useNavigate();
   const location = useLocation();
   const tabValue =
-    location.pathname === '/dashboard' ? 1 : location.pathname === '/map' ? 2 : 0;
+    location.pathname === '/dashboard' ? 1 : 
+    location.pathname === '/map' ? 2 : 
+    location.pathname === '/chat' ? 3 : 0;
   return (
     <AppBar position="static">
       <Toolbar>
@@ -27,10 +30,12 @@ function NavTabs() {
           if (v === 0) navigate('/');
           if (v === 1) navigate('/dashboard');
           if (v === 2) navigate('/map');
+          if (v === 3) navigate('/chat');
         }} textColor="inherit" indicatorColor="secondary">
           <Tab label="Home" />
           <Tab label="Dashboard" />
           <Tab label="Map" />
+          <Tab label="Chat" />
         </Tabs>
       </Toolbar>
     </AppBar>
@@ -55,6 +60,7 @@ function App() {
           <Route path="/" element={<ClinicalTrials />} />
           <Route path="/dashboard" element={<Dashboard_data />} />
           <Route path="/map" element={<MapPage />} />
+          <Route path="/chat" element={<ChatInterface />} />
         </Routes>
       </Router>
     </ThemeProvider>
