@@ -25,6 +25,13 @@ app.get('/api/clinical-trials', async (req, res) => {
       params['filter.overallStatus'] = params['status[]'];
       delete params['status[]'];
     }
+    // Map location filter if present
+    if (params.lat && params.lon && params.radius) {
+      params['filter.location'] = `${params.lat},${params.lon},${params.radius}`;
+      delete params.lat;
+      delete params.lon;
+      delete params.radius;
+    }
     params.fields = [
       'protocolSection.identificationModule.nctId',
       'protocolSection.identificationModule.briefTitle',
