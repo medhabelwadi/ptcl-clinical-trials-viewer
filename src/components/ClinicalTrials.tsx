@@ -74,7 +74,11 @@ const ClinicalTrials: React.FC = () => {
     try {
       const params: any = {};
       if (pageToken) params.pageToken = pageToken;
-      if (subtype && subtype !== 'All') params.cond = subtype;
+      if (subtype && subtype !== 'All') {
+        params.cond = subtype;
+      } else if (subtype === 'All') {
+        params.cond = 'peripheral T cell lymphoma';
+      }
       if (status && status.length > 0) params.status = status;
       const geoToUse = geoOverride !== undefined ? geoOverride : geo;
       if (geoToUse && radius) {
