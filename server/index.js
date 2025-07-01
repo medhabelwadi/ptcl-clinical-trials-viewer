@@ -41,6 +41,11 @@ app.get('/api/clinical-trials', async (req, res) => {
     delete params.lon;
     delete params.radius;
 
+    // Add geo filter if lat, lon, and radius are present
+    if (req.query.lat && req.query.lon && req.query.radius) {
+      params['filter.geo'] = `distance(${req.query.lat},${req.query.lon},${req.query.radius}mi)`;
+    }
+
     params.fields = [
       'protocolSection.identificationModule.nctId',
       'protocolSection.identificationModule.briefTitle',
