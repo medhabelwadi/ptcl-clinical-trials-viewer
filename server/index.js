@@ -20,6 +20,11 @@ app.get('/api/clinical-trials', async (req, res) => {
       params['filter.overallStatus'] = params.status;
       delete params.status;
     }
+    // Remove any status[] parameter (in case frontend sends arrays)
+    if (params['status[]']) {
+      params['filter.overallStatus'] = params['status[]'];
+      delete params['status[]'];
+    }
     params.fields = [
       'protocolSection.identificationModule.nctId',
       'protocolSection.identificationModule.briefTitle',
@@ -31,6 +36,8 @@ app.get('/api/clinical-trials', async (req, res) => {
       'protocolSection.designModule.phases'
     ].join(',');
     if (!params.pageSize) params.pageSize = 10;
+
+    console.log('Params sent to ClinicalTrials.gov:', params);
 
     const response = await axios.get(
       'https://clinicaltrials.gov/api/v2/studies',

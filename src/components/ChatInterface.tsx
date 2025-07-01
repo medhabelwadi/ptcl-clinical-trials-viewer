@@ -21,7 +21,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = () => {
     setNlwebUrl(backendUrl);
     
     // Check if NLWeb backend is accessible
-    fetch(`${backendUrl}/mcp/health`)
+    fetch(`${backendUrl}/mcp/health`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    })
       .then(response => {
         if (response.ok) {
           setIsLoading(false);
