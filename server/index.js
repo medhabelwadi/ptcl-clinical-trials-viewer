@@ -12,7 +12,11 @@ app.get('/api/clinical-trials', async (req, res) => {
   try {
     const params = { ...req.query };
     // Always use a broad PTCL condition if not provided
-    params['query.cond'] = req.query.cond || 'peripheral T cell lymphoma';
+    if (req.query.cond && req.query.cond !== 'All') {
+      params['query.cond'] = req.query.cond;
+    } else {
+      params['query.cond'] = 'peripheral T cell lymphoma';
+    }
     // Remove any direct 'cond' property to avoid conflicts
     delete params.cond;
     // Map 'status' to 'filter.overallStatus' for the API
