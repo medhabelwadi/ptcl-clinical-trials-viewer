@@ -26,12 +26,13 @@ app.get('/api/clinical-trials', async (req, res) => {
     delete params['query.cond'];
 
     // Map status/status[] to filter.overallStatus
-    if (params.status) {
-      params['filter.overallStatus'] = params.status;
-      delete params.status;
+    let statusParam = req.query.status || req.query['status[]'];
+    if (Array.isArray(statusParam)) {
+      statusParam = statusParam.join(',');
     }
-    if (params['status[]']) {
-      params['filter.overallStatus'] = params['status[]'];
+    if (statusParam) {
+      params['filter.overallStatus'] = statusParam;
+      delete params.status;
       delete params['status[]'];
     }
 
