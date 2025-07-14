@@ -90,7 +90,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = () => {
         }}
       >
         <iframe
-          src={nlwebUrl}
+          src={`${process.env.REACT_APP_BACKEND_URL}/nlweb`}
           style={{
             width: '100%',
             height: '100%',

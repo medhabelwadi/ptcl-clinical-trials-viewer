@@ -252,7 +252,7 @@ const TrialsByYearChart: React.FC<{ data: { year: number, value: number }[] }> =
       </ResponsiveContainer>
     </Paper>
   </Box>
-);
+      );
 
 const TrialsByLocationChart: React.FC<{ data: { name: string, value: number }[] }> = ({ data }) => (
   <Box flex={1} maxWidth={600}>
