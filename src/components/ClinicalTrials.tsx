@@ -77,9 +77,11 @@ const ClinicalTrials: React.FC = () => {
       if (pageToken) params.pageToken = pageToken;
       if (subtype && subtype !== 'All') params.cond = subtype;
       if (status && status.length > 0) params.status = status;
-      if (zipcode && radius) {
-        params['filter.locationZip'] = zipcode;
-        params['filter.locationRadius'] = radius;
+      const geoToUse = geoOverride !== undefined ? geoOverride : geo;
+      if (geoToUse && radius) {
+        params.lat = geoToUse.lat;
+        params.lon = geoToUse.lon;
+        params.radius = radius;
       }
       // Use URLSearchParams to serialize status as repeated keys
       const searchParams = new URLSearchParams();
