@@ -1,6 +1,8 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const qs = require('qs');
 
 const app = express();
 const PORT = process.env.PORT ||5050;
@@ -93,6 +95,28 @@ app.get('/api/clinical-trials/:nctId', async (req, res) => {
       res.status(500).json({ error: 'Failed to fetch study details from ClinicalTrials.gov', details: error.message });
     }
   }
+});
+
+// Proxy all /nlweb and subpaths to NLWeb backend
+app.use('/nlweb', createProxyMiddleware({
+  target: 'http://localhost:8000',
+  changeOrigin: true,
+  pathRewrite: { '^/nlweb': '' },
+}));
+
+// Proxy /static to NLWeb backend for static assets
+app.use('/static', createProxyMiddleware({
+  target: 'http://localhost:8000',
+  changeOrigin: true,
+}));
+
+// Proxy additional NLWeb API endpoints
+const nlwebApiEndpoints = ['/sites', '/ask', '/mcp', '/conversations', '/favicon.ico'];
+nlwebApiEndpoints.forEach(endpoint => {
+  app.use(endpoint, createProxyMiddleware({
+    target: 'http://localhost:8000',
+    changeOrigin: true,
+  }));
 });
 
 app.listen(PORT, () => {

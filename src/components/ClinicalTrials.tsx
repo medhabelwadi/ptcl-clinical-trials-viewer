@@ -72,6 +72,7 @@ const ClinicalTrials: React.FC = () => {
 
   const fetchTrials = async (pageToken?: string, subtype?: string, status?: string[], geoOverride?: { lat: number; lon: number } | null) => {
     try {
+      // Build params for API call
       const params: any = {};
       if (pageToken) params.pageToken = pageToken;
       if (subtype && subtype !== 'All') params.cond = subtype;
@@ -82,7 +83,16 @@ const ClinicalTrials: React.FC = () => {
         params.lon = geoToUse.lon;
         params.radius = radius;
       }
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/clinical-trials`, { params });
+      // Use URLSearchParams to serialize status as repeated keys
+      const searchParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((v) => searchParams.append(key, String(v)));
+        } else {
+          searchParams.append(key, String(value));
+        }
+      });
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/clinical-trials?${searchParams.toString()}`);
       const trialsData = (response.data.studies || []).map((study: any) => ({
         nctId: study.protocolSection?.identificationModule?.nctId || 'N/A',
         briefTitle: study.protocolSection?.identificationModule?.briefTitle || 'No Title',
