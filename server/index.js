@@ -13,26 +13,42 @@ app.use(express.json());
 app.get('/api/clinical-trials', async (req, res) => {
   try {
     const params = { ...req.query };
-    // Always use a broad PTCL condition if not provided
-    params['query.cond'] = req.query.cond || 'peripheral T cell lymphoma';
-    // Remove any direct 'cond' property to avoid conflicts
-    delete params.cond;
-    // Map 'status' to 'filter.overallStatus' for the API
-    if (params.status) {
-      if (Array.isArray(params.status)) {
-        params['filter.overallStatus'] = params.status.join(',');
-      } else {
-        params['filter.overallStatus'] = params.status;
-      }
-      delete params.status;
+
+    // Always use a broad PTCL condition if not provided or if "All" is selected
+    if (!req.query.cond || req.query.cond === 'All' || req.query.cond.trim() === '') {
+      params['query.term'] = 'peripheral T cell lymphoma';
+    } else if (req.query.cond === 'peripheral T cell lymphoma') {
+      // When frontend sends 'peripheral T cell lymphoma' (for "All" selection)
+      params['query.term'] = 'peripheral T cell lymphoma';
+    } else {
+      // For specific subtypes, use query.term for better filtering
+      params['query.term'] = req.query.cond;
     }
+    delete params.cond;
+    delete params['query.cond'];
+
+    // Map status/status[] to filter.overallStatus
+    let statusParam = req.query.status || req.query['status[]'];
+    if (Array.isArray(statusParam)) {
+      statusParam = statusParam.join(',');
+    }
+    if (statusParam) {
+      params['filter.overallStatus'] = statusParam;
+      delete params.status;
+      delete params['status[]'];
+    }
+
+    // Remove unsupported location params
+    delete params['filter.location'];
+    delete params.lat;
+    delete params.lon;
+    delete params.radius;
+
     // Add geo filter if lat, lon, and radius are present
     if (req.query.lat && req.query.lon && req.query.radius) {
       params['filter.geo'] = `distance(${req.query.lat},${req.query.lon},${req.query.radius}mi)`;
-      delete params.lat;
-      delete params.lon;
-      delete params.radius;
     }
+
     params.fields = [
       'protocolSection.identificationModule.nctId',
       'protocolSection.identificationModule.briefTitle',
@@ -44,6 +60,8 @@ app.get('/api/clinical-trials', async (req, res) => {
       'protocolSection.designModule.phases'
     ].join(',');
     if (!params.pageSize) params.pageSize = 10;
+
+    console.log('Final params sent to ClinicalTrials.gov:', params);
 
     const response = await axios.get(
       'https://clinicaltrials.gov/api/v2/studies',

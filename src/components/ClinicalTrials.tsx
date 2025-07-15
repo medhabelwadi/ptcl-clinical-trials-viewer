@@ -76,7 +76,7 @@ const ClinicalTrials: React.FC = () => {
       const params: any = {};
       if (pageToken) params.pageToken = pageToken;
       if (subtype && subtype !== 'All') params.cond = subtype;
-      if (status && status.length > 0) params.status = status;
+      if (status && status.length > 0) params.status = status.join(',');
       const geoToUse = geoOverride !== undefined ? geoOverride : geo;
       if (geoToUse && radius) {
         params.lat = geoToUse.lat;
